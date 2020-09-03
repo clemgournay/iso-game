@@ -15,43 +15,62 @@ class Board {
             }
         };
         this.grid = [];
+
     }
 
     build() {
 
         this.size.px.w = this.size.tile.w * this.tileSize;
         this.size.px.h = this.size.tile.h * this.tileSize;
+
+
+        const incLayer = this.tileSize/4;
+
         for (let l = 0; l < this.nbLayers; l++) {
             this.grid.push([]);
         }
 
-        const incX = this.tileSize;
-        const incY = this.tileSize/4;
-
         for (let l = this.nbLayers - 1; l >= 0; l--) {
 
-            const startX = (this.game.view.canvas.width/2) - (this.size.px.w / 2);
-            const startY = (l * incY);
+            const startX = (this.size.px.w / 2) - (this.tileSize/2);
+            const startY = (this.nbLayers * (this.tileSize/2)) + this.nbLayers * incLayer;
+            const incX = this.tileSize/4;
+            const incY = this.tileSize/8;
 
-            let x = startX;
-            let y = startY;
-            
             for (let i = 0; i < this.size.tile.w; i++) {
-                const row = [];
+                const col = [];
+
+                let x = startX + (i * incX);
+                let y = startY - (l * incLayer) + (i * incY);
+                
                 for (let j = 0; j < this.size.tile.h; j++) {
-                    console.log(i, j)
-                    row.push({
-                        i: i, j: i,
-                        x: x, y: y
+                    
+                    col.push({
+                        x: x, y: y,
+                        i: i, j: j,
+                        tile: 'EMPTY',
+                        collides: false,
+                        forground: false
                     });
+
+                    x -= incX;
+                    y += incY;
                 }
-                x += incX;
-                y += incY;
-                this.grid[l].push(row);
+                this.grid[l].push(col);
+            }
+            
+        }
+
+        for (let i = 1; i < this.size.tile.w; i++) {
+            for (let j = 1; j < this.size.tile.h; j++) {
+                this.grid[0][i][j].tile = 'FLOOR';
             }
         }
+
         console.log(this.grid)
+
     }
+
 
 }
 
