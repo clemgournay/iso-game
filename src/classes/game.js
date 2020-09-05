@@ -5,7 +5,7 @@ import { AssetsLoader } from './assets-loader.js';
 class Game {
 
     constructor() {
-        this.board = new Board(this, 128, 10, 10);
+        this.board = new Board(this, 256, 10, 10);
         this.view = new View(this);
         this.loader = new AssetsLoader(this);
         this.assets = {};

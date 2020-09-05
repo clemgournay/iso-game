@@ -15,7 +15,9 @@ class Board {
             }
         };
         this.grid = [];
-
+        this.offset = {
+            x: 0, y: 0
+        }
     }
 
     build() {
@@ -23,8 +25,9 @@ class Board {
         this.size.px.w = this.size.tile.w * this.tileSize;
         this.size.px.h = this.size.tile.h * this.tileSize;
 
+        this.resize();
 
-        const incLayer = this.tileSize/4;
+        const incLayer = this.tileSize/2;
 
         for (let l = 0; l < this.nbLayers; l++) {
             this.grid.push([]);
@@ -69,6 +72,13 @@ class Board {
 
         console.log(this.grid)
 
+    }
+
+    resize() {
+        this.offset.x = (window.innerWidth/2) - (this.size.px.w/2);
+        this.offset.y = (window.innerHeight/2) - (this.size.px.h/2);
+
+        console.log(this.offset)
     }
 
 

@@ -1,4 +1,3 @@
-import { Board } from './board.js';
 import { Tileset } from './tileset.js';
 
 class View {
@@ -29,17 +28,16 @@ class View {
     }
 
     drawBoard() {
-        for (let l = 0; l < this.game.board.nbLayers; l++) {
+        for (let l = 0; l < this.game.board.nbLayers - 3; l++) {
             for (let i = 0; i < this.game.board.size.tile.w; i++) {
                 for (let j = 0; j < this.game.board.size.tile.h; j++) {
                     const asset = this.game.assets.images['grass'];
                     const block = this.game.board.grid[l][i][j];
-                    const tile = this.tileset.tiles[0][0];
-                    console.log(tile.x, tile.y, this.tileset.size.px.w, this.tileset.size.px.h)
+                    const tile = this.tileset.tiles[0][3];
                     this.ctx.drawImage(
                         asset, 
                         tile.x, tile.y, this.tileset.tileSize, this.tileset.tileSize,
-                        block.x, block.y, this.game.board.tileSize, this.game.board.tileSize
+                        this.game.board.offset.x + block.x, this.game.board.offset.y + block.y, this.game.board.tileSize, this.game.board.tileSize
                     );
                 }
             }
@@ -49,6 +47,7 @@ class View {
     resize() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.game.board.resize();
         this.draw();
     }
 
