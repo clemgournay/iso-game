@@ -10,7 +10,7 @@ class View {
     }
 
     init () {
-        this.tileset = new Tileset(this.game, this.game.assets.images.grass, 6, 5);
+        this.tileset = new Tileset(this.game, this.game.assets.images.nature, 6, 6, 0);
         this.tileset.split();
         
         document.body.appendChild(this.canvas);
@@ -22,24 +22,80 @@ class View {
     }
 
     draw() {
-        this.ctx.fillStyle = 'Black';
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawBackground();
         this.drawBoard();
+        this.drawCharacter();
+        if (this.game.debug) {
+            this.drawHelpers();
+        }
+    }
+    
+    drawBackground() {
+                /*const bg = this.game.assets.images['galaxy'];
+        this.ctx.drawImage(bg, 0, 0, bg.width, bg.height, 0, 0, this.canvas.width, this.canvas.height);*/
+        const gradient = this.ctx.createLinearGradient(0, 0, this.canvas.width, this.canvas.height);
+        gradient.addColorStop(0, 'white');
+        gradient.addColorStop(1, 'lightblue');
+        this.ctx.fillStyle = gradient;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     drawBoard() {
-        for (let l = 0; l < this.game.board.nbLayers - 3; l++) {
+        for (let l = 0; l < this.game.board.nbLayers; l++) {
             for (let i = 0; i < this.game.board.size.tile.w; i++) {
                 for (let j = 0; j < this.game.board.size.tile.h; j++) {
-                    const asset = this.game.assets.images['grass'];
+                    const asset = this.tileset.img;
                     const block = this.game.board.grid[l][i][j];
-                    const tile = this.tileset.tiles[0][3];
-                    this.ctx.drawImage(
-                        asset, 
-                        tile.x, tile.y, this.tileset.tileSize, this.tileset.tileSize,
-                        this.game.board.offset.x + block.x, this.game.board.offset.y + block.y, this.game.board.tileSize, this.game.board.tileSize
-                    );
+                    
+                    if (block.tile) {
+                        const tile = this.tileset.tiles[block.tile.i][block.tile.j];
+                        this.ctx.drawImage(
+                            asset, 
+                            tile.x, tile.y, 
+                            this.tileset.tileSize.w, 
+                            this.tileset.tileSize.h,
+                            this.game.board.offset.x + block.x - this.tileset.padding, 
+                            this.game.board.offset.y + block.y - this.tileset.padding, 
+                            this.game.board.tileSize.w + this.tileset.padding,
+                            this.game.board.tileSize.h + this.tileset.padding
+                        );
+                    }
                 }
+            }
+        }
+    }
+
+    drawCharacter() {
+        const character = this.game.character;
+        const sprite = character.sprites[character.anim][character.frame][0];
+        this.ctx.drawImage(
+            character.img, 
+            sprite.x, sprite.y, 
+            character.width, character.height,
+            (this.game.board.offset.x + character.x) - character.offset.x,  
+            (this.game.board.offset.y + character.y) - character.offset.y, 
+            character.width, character.height
+        );
+    }
+
+    drawHelpers() {
+
+        this.ctx.fillStyle = 'red';
+        this.ctx.font = '20px consolas';
+        this.ctx.textAlign = 'center';
+        this.ctx.strokeRect(this.game.board.offset.x, this.game.board.offset.y, this.game.board.size.px.w, this.game.board.size.px.h);
+
+        for (let i = 0; i < this.game.board.size.tile.w; i++) {
+            for (let j = 0; j < this.game.board.size.tile.h; j++) {
+                const block = this.game.board.grid[this.game.board.groundLayer][i][j];
+                this.ctx.strokeStyle = 'red';
+                this.ctx.strokeRect(
+                    this.game.board.offset.x + block.x, 
+                    this.game.board.offset.y + block.y, 
+                    this.game.board.tileSize.w, this.game.board.tileSize.h
+                );
+                
+                this.ctx.fillText(i+'-'+j, this.game.board.offset.x + block.x + (this.game.board.tileSize.w / 2), this.game.board.offset.y + block.y + 20)
             }
         }
     }

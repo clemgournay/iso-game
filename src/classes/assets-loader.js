@@ -9,7 +9,6 @@ class AssetsLoader {
     countAssets() {
         this.nbAssets = 0;
         for (let type in this.assetsToLoad) {
-            console.log(type)
             for (let id in this.assetsToLoad[type]) {
                 this.nbAssets++;
             }
