@@ -11,7 +11,7 @@ class Game {
         this.view = new View(this);
         this.controls = new Controls(this);
         this.loader = new AssetsLoader(this);
-        this.character = new Character(this, 5, 2, 'blueCube', 1, 1, 64, 96, ['idle']);
+        this.character = new Character(this, 7, 7, 'blueCube', 1, 1, 64, 96, ['idle']);
         this.assets = {};
         this.mousePos = {x: 0, y: 0};
         this.hoverBlock = null;
@@ -61,14 +61,30 @@ class Game {
             for (let i = 0; i < this.board.size.tile.w; i++) {
                 const row = [];
                 for (let j = 0; j < this.board.size.tile.h; j++) {
-                    if (this.board.grid[this.board.groundLayer][i][j] && this.board.grid[this.board.groundLayer][i][j].collides) {
+
+                    let collides = false;
+                    let l = this.board.groundLayer;
+                    /*while (!collides && l < this.board.nbLayers) {
+                        if (this.board.grid[l][i][j] && this.board.grid[l][i][j].collides) {
+                            collides = true;
+                        } else {
+                            l++;
+                        }
+                    }*/
+                    if (this.board.grid[l][i][j] && this.board.grid[l][i][j].collides) {
+                        collides = true;
+                    }
+
+                    if (collides) {
                         row.push(0);
                     } else {
                         row.push(1);
                     }
+                    
                 }
                 grid.push(row);
             }
+            console.log(grid)
 
             const graph = new Graph(grid);
             const start = graph.grid[this.character.block.i][this.character.block.j];
@@ -76,10 +92,32 @@ class Game {
 
             const path = [];
             const result = astar.search(graph, start, end);
+            let prevStep = {x: this.character.block.i, y: this.character.block.j};
             result.forEach((step) => {
+
+                let direction = '';
+                if (step.x === prevStep.x) {
+                    console.log('SAME I')
+                    if (prevStep.y < step.y) {
+                        direction = 'down-left'
+                    } else if (prevStep.y > step.y) {
+                        direction = 'up-right';
+                    }
+                } else if (step.y === prevStep.y) {
+                    console.log('SAME J')
+                    if (prevStep.x > step.x) {
+                        direction = 'up-left';
+                    } else if (prevStep.x < step.x) {
+                        direction = 'down-right';
+                    }
+                }
+
                 path.push({
+                    direction: direction,
                     i: step.x, j: step.y
                 });
+
+                prevStep = step;
             })
             this.character.path = path;
             console.log('[GAME] START BLOCK', this.character.block)

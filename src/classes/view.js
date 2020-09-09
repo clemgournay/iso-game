@@ -72,8 +72,8 @@ class View {
             character.img, 
             sprite.x, sprite.y, 
             character.width, character.height,
-            (this.game.board.offset.x + character.x) - character.offset.x,  
-            (this.game.board.offset.y + character.y) - character.offset.y, 
+            (this.game.board.offset.x + character.x) - character.center.x,  
+            (this.game.board.offset.y + character.y) - character.center.y, 
             character.width, character.height
         );
     }
@@ -98,6 +98,34 @@ class View {
                 this.ctx.fillText(i+'-'+j, this.game.board.offset.x + block.x + (this.game.board.tileSize.w / 2), this.game.board.offset.y + block.y + 20)
             }
         }
+
+        const block = this.game.character.block;
+        this.ctx.fillStyle = 'blue';
+        this.ctx.globalAlpha = 0.1;
+        this.ctx.fillRect(
+            this.game.board.offset.x + block.x, this.game.board.offset.y + block.y, 
+            this.game.board.tileSize.w, this.game.board.tileSize.h
+        );
+        this.ctx.globalAlpha = 1;
+
+        this.ctx.fillStyle = 'blue';
+        const character = this.game.character;
+        this.ctx.fillRect(
+            (this.game.board.offset.x + character.x),  
+            (this.game.board.offset.y + character.y), 4, 4);
+            if (this.game.character.path.length > 0) {
+                
+                this.ctx.fillStyle = 'yellow';
+                const step = character.path[character.step];
+                const endBlock = this.game.board.grid[this.game.board.groundLayer][step.i][step.j];
+                console.log(endBlock)
+
+                const endPos = {
+                    x: this.game.board.offset.x + endBlock.x + this.game.board.tileSize.w/2,
+                    y: this.game.board.offset.y + endBlock.y + this.game.board.tileSize.h/4,
+                };
+                this.ctx.fillRect(endPos.x, endPos.y, 4, 4);
+            }
     }
 
     resize() {

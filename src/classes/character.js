@@ -18,14 +18,13 @@ class Character {
                 w: charsetW, h: charsetH
             }
         };
-        this.centerX = centerX;
+        this.center = {
+            x: centerX, y: centerY
+        };
         this.centerY = centerY;
         this.order = order;
         this.width = 0;
         this.height = 0;
-        this.offset = {
-            x: 0, y: 0
-        }
         this.sprites = {
             idle: [],
             walk: []
@@ -34,7 +33,7 @@ class Character {
         this.anim = 'idle';
         this.path = [];
         this.step = 0;
-        this.speed = 1;
+        this.speed = 2;
     }
 
     init() {
@@ -44,10 +43,8 @@ class Character {
         this.width = (this.charsetSize.px.w / this.charsetSize.tile.w);
         this.height = (this.charsetSize.px.h / this.charsetSize.tile.h);
         this.block = this.game.board.grid[this.game.board.groundLayer][this.startPos.i][this.startPos.j];
-        this.offset.x = this.width - this.centerX;
-        this.offset.y = this.height - this.centerY;
-        this.x = this.block.x + this.offset.x;
-        this.y = this.block.y - this.offset.y;
+        this.x = this.block.x + this.center.x;
+        this.y = this.block.y - (this.height/2) + this.center.y;
 
         for (let j = 0; j < this.charsetSize.tile.h; j++) {
             const row = [];
@@ -67,44 +64,51 @@ class Character {
 
     update() {
         if (this.path.length > 0) {
+            
             const step = this.path[this.step];
             const endBlock = this.game.board.grid[this.game.board.groundLayer][step.i][step.j];
 
             const endPos = {
-                x: Math.floor(this.game.board.offset.x + endBlock.x),
-                y: Math.floor(this.game.board.offset.y + endBlock.y),
+                x: endBlock.x + this.game.board.tileSize.w/2,
+                y: endBlock.y + this.game.board.tileSize.h/4
             };
 
-            if (this.x < endPos.x) {
-                if (this.y < endPos.y) {
+            //console.log(this.step, step);
+            switch (step.direction) {
+                case 'down-right':
                     console.log('[CHARACTER] Go down right')
                     this.x += this.speed;
                     this.y += this.speed * 0.5;
                     this.block = this.game.getBlock({x: this.x, y: this.y});
-                } else if (this.y > endPos.y) {
-                    console.log('[CHARACTER] Go up right')
-                    this.x += this.speed;
-                    this.y -= this.speed * 0.5;
-                    this.block = this.game.getBlock({x: this.x, y: this.y});
-                }
-            } else {
-                if (this.y < endPos.y) {
-                    console.log('[CHARACTER] Go down left')
-                    this.x -= this.speed;
-                    this.y += this.speed * 0.5;
-                    this.block = this.game.getBlock({x: this.x, y: this.y});
-                } else if (this.y > endPos.y) {
+                    break;
+                case 'up-left':
                     console.log('[CHARACTER] Go up left')
                     this.x -= this.speed;
                     this.y -= this.speed * 0.5;
                     this.block = this.game.getBlock({x: this.x, y: this.y});
-                }
+                    break;
+                case 'down-left':
+                    console.log('[CHARACTER] Go down left')
+                    this.x -= this.speed;
+                    this.y += this.speed * 0.5;
+                    this.block = this.game.getBlock({x: this.x, y: this.y});
+                    break;
+                case 'up-right':
+                    console.log('[CHARACTER] Go up right')
+                    this.x += this.speed;
+                    this.y -= this.speed * 0.5;
+                    this.block = this.game.getBlock({x: this.x, y: this.y});
+                    break;
             }
 
-            console.log(this.x, this.y, endPos.x, endPos.y);
             if (this.x === endPos.x && this.y === endPos.y) {
-                this.path = [];
-                console.log('OWARI')
+                this.step++;
+                if (this.step === this.path.length) {
+                    this.path = [];
+                    this.step = 0;
+                    console.log('OWARI')
+                }
+                
             }
             
 

@@ -110,6 +110,16 @@ class Board {
 
         this.grid[1][8][8].tile = {i: 1, j: 0};
 
+        this.grid[1][3][3].collides = true;
+        this.grid[1][4][3].collides = true;
+        this.grid[1][5][3].collides = true;
+        this.grid[1][3][4].collides = true;
+        this.grid[1][3][5].collides = true;
+        this.grid[1][4][4].collides = true;
+        this.grid[1][4][5].collides = true;
+        this.grid[1][5][4].collides = true;
+        this.grid[1][5][5].collides = true;
+
         this.grid[2][2][0].tile = {i: 0, j: 0};
         this.grid[2][2][0].collides = true;
         this.grid[2][2][1].tile = {i: 0, j: 0};
