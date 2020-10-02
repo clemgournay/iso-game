@@ -134,6 +134,15 @@ class Board {
         this.grid[2][2][5].collides = true;
 
 
+        this.grid[1][4][1].tile = {i: 2, j: 1};
+        this.grid[1][4][1].collides = true;
+        this.grid[2][3][0].tile = {i: 2, j: 0};
+
+        this.grid[1][8][1].tile = {i: 2, j: 1};
+        this.grid[1][8][1].collides = true;
+        this.grid[2][7][0].tile = {i: 2, j: 0};
+
+
         console.log('[BOARD] GRID', this.grid)
 
     }

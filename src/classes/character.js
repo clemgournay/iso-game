@@ -34,6 +34,7 @@ class Character {
         this.path = [];
         this.step = 0;
         this.speed = 2;
+        this.waitUntilNextBlock = false;
     }
 
     init() {
@@ -73,7 +74,6 @@ class Character {
                 y: endBlock.y + this.game.board.tileSize.h/4
             };
 
-            //console.log(this.step, step);
             switch (step.direction) {
                 case 'down-right':
                     console.log('[CHARACTER] Go down right')
@@ -102,12 +102,19 @@ class Character {
             }
 
             if (this.x === endPos.x && this.y === endPos.y) {
-                this.step++;
-                if (this.step === this.path.length) {
+                if (this.waitUntilNextBlock) {
                     this.path = [];
                     this.step = 0;
-                    console.log('OWARI')
+                    this.game.moveCharacterTo(this.game.destinationBlock);
+                } else {
+                    this.step++;
+                    if (this.step === this.path.length) {
+                        this.path = [];
+                        this.step = 0;
+                        console.log('OWARI')
+                    }
                 }
+                
                 
             }
             
